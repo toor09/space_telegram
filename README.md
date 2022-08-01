@@ -43,6 +43,12 @@ cp .env.example .env
     HUBBLE_PHOTO_FILE_NAME=hubble.jpeg
     SPACE_X_URL=https://api.spacexdata.com
     SPACE_X_URI_LATEST=/v5/launches/latest
+    NASA_API_KEY=bDx2bd83nHdbZdodmq7jdodmpxZwebexheEwbexw
+    NASA_URL=https://api.nasa.gov
+    NASA_URI_APOD=/planetary/apod
+    NASA_URI_EPIC=/EPIC/api/natural/images
+    NASA_URI_EPIC_ARCHIVE=/EPIC/archive/natural
+    NASA_APOD_IMAGES_COUNT=30
   </pre>
 </details>
 
