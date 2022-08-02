@@ -39,23 +39,62 @@ cp .env.example .env
   <summary>Переменные окружения</summary>
   <pre>
     IMG_PATH=images
-    HUBBLE_PHOTO_URL=https://upload.wikimedia.org/wikipedia/commons/3/3f/HST-SM4.jpeg
-    HUBBLE_PHOTO_FILE_NAME=hubble.jpeg
     SPACE_X_URL=https://api.spacexdata.com
     SPACE_X_URI_LATEST=/v5/launches/latest
+    SPACE_X_URI_LAUNCH_ID=/v5/launches/
     NASA_API_KEY=bDx2bd83nHdbZdodmq7jdodmpxZwebexheEwbexw
     NASA_URL=https://api.nasa.gov
     NASA_URI_APOD=/planetary/apod
     NASA_URI_EPIC=/EPIC/api/natural/images
     NASA_URI_EPIC_ARCHIVE=/EPIC/archive/natural
-    NASA_APOD_IMAGES_COUNT=30
+    TIMEOUT=10
+    RETRY_COUNT=5
+    STATUS_FORCE_LIST=429,500,502,503,504
+    ALLOWED_METHODS=HEAD,GET,OPTIONS
   </pre>
 </details>
+
+***Значение переменной окружения `NASA_API_KEY` здесь указано для примера, с данным значением скрипт работать не будет***
+
+- Нужно получить активный `NASA_API_KEY` на официальном сайте [Nasa](https://api.nasa.gov/). Нужно перейти в меню Generate API Key и заполнить небольшую форму.
 
 ## Запуск линтеров
 
 ```
 flake8 . && mypy . && isort .
+```
+
+## Запуск скрипта по скачиванию фотографий при помощи SpaceX API
+
+- Для запуска скрипта по скачиванию фотографий при помощи SpaceX API вводим команду:
+```
+python3 fetch_spacex_images.py
+```
+- Есть возможность указать значение уникального идентификатора запуска:
+
+- `-i` или `--launch-id` c указанием уникального идентификатора запуска. По умолчанию значение равно "latest". В этом случае будут выбраны фото с последнего запуска. 
+```
+python3 fetch_spacex_images.py -i 5eb87d42ffd86e000604b384
+```
+
+## Запуск скрипта по скачиванию фотографий при помощи NASA APOD API
+
+- Для запуска скрипта по скачиванию фотографий при помощи NASA APOD API вводим команду:
+```
+python3 fetch_nasa_apod_images.py
+```
+- Есть возможность указать значение кол-ва фото для скачивания:
+
+- `-с` или `--images-count` c указанием кол-ва фото. По умолчанию значение равно 30. 
+```
+python3 fetch_nasa_apod_images.py -c 50
+```
+
+## Запуск скрипта по скачиванию фотографий при помощи NASA EPIC API
+
+- Для запуска скрипта по скачиванию фотографий при помощи NASA EPIC API вводим команду:
+```
+python3 fetch_nasa_epic_images.py
 ```
 
 ## Цели проекта
