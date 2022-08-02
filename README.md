@@ -51,6 +51,8 @@ cp .env.example .env
     RETRY_COUNT=5
     STATUS_FORCE_LIST=429,500,502,503,504
     ALLOWED_METHODS=HEAD,GET,OPTIONS
+    TG_BOT_TOKEN=
+    TG_CHAT_ID=
   </pre>
 </details>
 
