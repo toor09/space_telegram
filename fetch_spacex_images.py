@@ -51,8 +51,14 @@ def fetch_spacex_last_launch(launch_id: str) -> None:
             file_name = "space_x_"
             file_extension = ".jpg"
             image_space_x_path = os.path.join(
-                sanitize_filepath(settings.IMG_PATH),
-                sanitize_filename(f"{file_name}{image_number}{file_extension}")
+                sanitize_filepath(
+                    file_path=settings.IMG_PATH,
+                    platform="auto"
+                ),
+                sanitize_filename(
+                    filename=f"{file_name}{image_number}{file_extension}",
+                    platform="auto"
+                )
             )
             load_image(url=str(image_url), file_path=image_space_x_path)
 

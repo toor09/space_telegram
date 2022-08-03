@@ -67,7 +67,7 @@ def fetch_nasa_epic() -> None:
                          f"{image_name}{file_extension}" \
                          f"?api_key={nasa_url_params.get('api_key')}"
             epic_nasa_path = os.path.join(
-                sanitize_filepath(settings.IMG_PATH),
+                sanitize_filepath(settings.IMG_PATH, platform="auto"),
                 sanitize_filename(
                     f"{file_name}{image_number}{file_extension}"
                 )

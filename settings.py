@@ -14,12 +14,14 @@ class Settings(BaseSettings):
     NASA_URI_APOD: str
     NASA_URI_EPIC: str
     NASA_URI_EPIC_ARCHIVE: str
+    NASA_APOD_IMAGES_COUNT: int = 30
     TIMEOUT: int = 10
     RETRY_COUNT: int = 5
     STATUS_FORCE_LIST: str = "429,500,502,503,504"
     ALLOWED_METHODS: str = "HEAD,GET,OPTIONS"
     TG_BOT_TOKEN: str
     TG_CHAT_ID: str
+    PUBLISH_IMAGE_TIMEOUT: int = 4
 
     @validator("STATUS_FORCE_LIST")
     def status_force_list(cls, v: str) -> List[int]:

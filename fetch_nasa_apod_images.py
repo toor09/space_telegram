@@ -16,7 +16,7 @@ from utils import create_dirs, get_file_extension, load_image
 @click.command()
 @click.option(
     "-c", "--images-count",
-    default=30,
+    default=Settings().NASA_APOD_IMAGES_COUNT,
     help="Images count for loading."
 )
 def fetch_nasa_apod(images_count: int) -> None:
@@ -52,9 +52,13 @@ def fetch_nasa_apod(images_count: int) -> None:
             file_name = "nasa_apod_"
             file_extension = get_file_extension(url=image_link)
             apod_nasa_path = os.path.join(
-                sanitize_filepath(settings.IMG_PATH),
+                sanitize_filepath(
+                    file_path=settings.IMG_PATH,
+                    platform="auto"
+                ),
                 sanitize_filename(
-                    f"{file_name}{image_number}{file_extension}"
+                    filename=f"{file_name}{image_number}{file_extension}",
+                    platform="auto"
                 )
             )
             load_image(url=str(image_link), file_path=apod_nasa_path)

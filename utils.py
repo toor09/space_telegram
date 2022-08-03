@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Union
+from typing import List, Union
 
 import requests
 
@@ -23,3 +23,11 @@ def load_image(url: str, file_path: Union[Path, str]) -> None:
 
     with open(file_path, mode="wb") as file:
         file.write(image.content)
+
+
+def get_image_filenames(path: Union[Path, str]) -> List[str]:
+    """Get image filenames from directory."""
+    _, _, image_filenames = [filename for filename in os.walk(path)][0]
+    if not image_filenames:
+        return []
+    return image_filenames
