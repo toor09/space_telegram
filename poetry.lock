@@ -192,6 +192,18 @@ python-versions = ">=3.6"
 test = ["allpairspy", "click", "faker", "pytest (>=6.0.1)", "pytest-discord (>=0.0.6)", "pytest-md-report (>=0.0.12)"]
 
 [[package]]
+name = "pillow"
+version = "9.2.0"
+description = "Python Imaging Library (Fork)"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+docs = ["furo", "olefile", "sphinx (>=2.4)", "sphinx-copybutton", "sphinx-issues (>=3.0.1)", "sphinx-removed-in", "sphinxext-opengraph"]
+tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "packaging", "pyroma", "pytest", "pytest-cov", "pytest-timeout"]
+
+[[package]]
 name = "pycodestyle"
 version = "2.8.0"
 description = "Python style guide checker"
@@ -391,7 +403,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "fc53995afac555705f1df1ca6960925a6ab22d26493e9ec1cc8083af059221c0"
+content-hash = "1c1e4127304508b49180bcc1628e3036b355f4256cc1c0b5d4fe9d207b79f40a"
 
 [metadata.files]
 apscheduler = []
@@ -431,6 +443,7 @@ pathvalidate = [
     {file = "pathvalidate-2.5.0-py3-none-any.whl", hash = "sha256:e5b2747ad557363e8f4124f0553d68878b12ecabd77bcca7e7312d5346d20262"},
     {file = "pathvalidate-2.5.0.tar.gz", hash = "sha256:119ba36be7e9a405d704c7b7aea4b871c757c53c9adc0ed64f40be1ed8da2781"},
 ]
+pillow = []
 pycodestyle = [
     {file = "pycodestyle-2.8.0-py2.py3-none-any.whl", hash = "sha256:720f8b39dde8b293825e7ff02c475f3077124006db4f440dcbc9a20b76548a20"},
     {file = "pycodestyle-2.8.0.tar.gz", hash = "sha256:eddd5847ef438ea1c7870ca7eb78a9d47ce0cdb4851a5523949f2601d0cbbe7f"},

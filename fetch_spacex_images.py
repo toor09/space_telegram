@@ -17,7 +17,7 @@ from utils import create_dirs, load_image
 @click.option(
     "-i", "--launch-id",
     default="latest",
-    help="Id's Lauch."
+    help="Lauch ID."
 )
 def fetch_spacex_last_launch(launch_id: str) -> None:
     """Loading images from SpaceX API last launch."""

@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import List, Union
 
 import requests
+from PIL import Image
 
 
 def get_file_extension(url: str) -> str:
@@ -27,7 +28,36 @@ def load_image(url: str, file_path: Union[Path, str]) -> None:
 
 def get_image_filenames(path: Union[Path, str]) -> List[str]:
     """Get image filenames from directory."""
-    _, _, image_filenames = [filename for filename in os.walk(path)][0]
-    if not image_filenames:
+    try:
+        _, _, image_filenames = [filename for filename in os.walk(path)][0]
+    except IndexError:
         return []
     return image_filenames
+
+
+def get_file_size(filename: Union[Path, str]) -> int:
+    """Get filesize."""
+    return os.stat(filename).st_size
+
+
+def resize_image_file_to_limit(
+        filename: Union[Path, str],
+        upload_limit: int
+) -> None:
+    """Resizing image under limits for Telegram upload."""
+    with Image.open(fp=filename, mode="r") as source:
+        quality = 100
+        source.save(
+            fp=filename,
+            quality=quality,
+            optimize=True,
+            progressive=True
+        )
+        while get_file_size(filename=filename) >= upload_limit:
+            source.save(
+                fp=filename,
+                quality=quality-1,
+                optimize=True,
+                progressive=True
+            )
+            quality -= 1

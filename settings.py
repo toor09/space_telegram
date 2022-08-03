@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     ALLOWED_METHODS: str = "HEAD,GET,OPTIONS"
     TG_BOT_TOKEN: str
     TG_CHAT_ID: str
+    TG_MAX_LIMIT_UPLOAD_FILE: int = 10000000
     PUBLISH_IMAGE_TIMEOUT: int = 4
 
     @validator("STATUS_FORCE_LIST")

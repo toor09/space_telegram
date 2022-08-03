@@ -9,7 +9,11 @@ import telegram
 from pathvalidate import sanitize_filename, sanitize_filepath
 
 from settings import Settings
-from utils import get_image_filenames
+from utils import (
+    get_file_size,
+    get_image_filenames,
+    resize_image_file_to_limit
+)
 
 
 @click.command()
@@ -39,11 +43,18 @@ def auto_publish_images(publish_timeout: int) -> None:
                 ),
                 sanitize_filename(filename=image_filename, platform="auto")
             )
+            if get_file_size(
+                    filename=image_file_path
+            ) > settings.TG_MAX_LIMIT_UPLOAD_FILE:
+                resize_image_file_to_limit(
+                    filename=image_file_path,
+                    upload_limit=settings.TG_MAX_LIMIT_UPLOAD_FILE
+                )
             bot.send_document(
                 chat_id=settings.TG_CHAT_ID,
                 document=open(file=image_file_path, mode="rb")
             )
-            message = f"""{image_file_path} было опубликовано в telegram
+            message = f"""Фото {image_file_path} было опубликовано в telegram
                     канале {settings.TG_CHAT_ID}.
             """
             message = "\n".join(
