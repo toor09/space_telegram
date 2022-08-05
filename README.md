@@ -66,7 +66,7 @@ cp .env.example .env
 ## Запуск линтеров
 
 ```
-flake8 . && mypy . && isort .
+isort . && flake8 . && mypy .
 ```
 
 ## Запуск скрипта по скачиванию фотографий при помощи SpaceX API

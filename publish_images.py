@@ -1,18 +1,17 @@
-import os
 import sys
-import textwrap
 from random import choice
 from typing import Optional
 
 import click
 import telegram
-from pathvalidate import sanitize_filename, sanitize_filepath
 
 from settings import Settings
 from utils import (
+    correct_textwrap_dedent,
     get_file_size,
     get_image_filenames,
-    resize_image_file_to_limit
+    resize_image_file_to_limit,
+    sanitize_file_path
 )
 
 
@@ -27,9 +26,9 @@ def publish_images(image_filename: Optional[str]) -> None:
     settings = Settings()
     bot = telegram.Bot(token=settings.TG_BOT_TOKEN)
     if image_filename:
-        image_file_path = os.path.join(
-            sanitize_filepath(file_path=settings.IMG_PATH, platform="auto"),
-            sanitize_filename(filename=image_filename, platform="auto")
+        image_file_path = sanitize_file_path(
+            file_path=settings.IMG_PATH,
+            file_name=image_filename
         )
     else:
         image_filenames = get_image_filenames(path=settings.IMG_PATH)
@@ -39,9 +38,9 @@ def publish_images(image_filename: Optional[str]) -> None:
             sys.exit(1)
 
         random_image_filename = choice(image_filenames)
-        image_file_path = os.path.join(
-            sanitize_filepath(file_path=settings.IMG_PATH, platform="auto"),
-            sanitize_filename(filename=random_image_filename, platform="auto")
+        image_file_path = sanitize_file_path(
+            file_path=settings.IMG_PATH,
+            file_name=random_image_filename
         )
     try:
         if get_file_size(
@@ -57,17 +56,21 @@ def publish_images(image_filename: Optional[str]) -> None:
                 chat_id=settings.TG_CHAT_ID,
                 document=file,
             )
-    except FileNotFoundError as err:
-        click.echo(message=f"Фото не было опубликовано по причине {err}.")
-        sys.exit(1)
+        message = f"""Фото {image_file_path} было опубликовано в telegram
+                    канале {settings.TG_CHAT_ID}.
+            """
+        click.echo(message=correct_textwrap_dedent(message))
 
-    message = f"""Фото {image_file_path} было опубликовано в telegram
-            канале {settings.TG_CHAT_ID}.
-    """
-    message = "\n".join(
-        [textwrap.dedent(line) for line in message.split("\n")]
-    )
-    click.echo(message=message)
+    except telegram.error.NetworkError as err:
+        message = f"""Фото {image_file_path} не удалось опубликовать по
+                причине: {err}.
+        """
+        click.echo(message=correct_textwrap_dedent(message))
+
+    except FileNotFoundError as err:
+        message = f"Фото не было опубликовано по причине {err}."
+        click.echo(message=message)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

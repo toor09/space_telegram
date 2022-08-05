@@ -1,16 +1,16 @@
-import os
 import time
 from datetime import datetime as dt
 
 import click
-import requests
-from pathvalidate import sanitize_filename, sanitize_filepath
 from requests import ConnectionError, HTTPError
-from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
 
 from settings import Settings
-from utils import create_dirs, load_image
+from utils import (
+    correct_textwrap_dedent,
+    load_image,
+    prepare_script_environment,
+    sanitize_file_path
+)
 
 
 @click.command()
@@ -18,19 +18,7 @@ def fetch_nasa_epic() -> None:
     """
     Loading images from NASA API Earth Polychromatic Imaging Camera (EPIC).
     """
-    settings = Settings()
-    create_dirs(settings.IMG_PATH)
-    retry_strategy = Retry(
-        total=settings.RETRY_COUNT,
-        status_forcelist=settings.STATUS_FORCE_LIST,
-        allowed_methods=settings.ALLOWED_METHODS
-    )
-    adapter = HTTPAdapter(max_retries=retry_strategy)
-
-    session = requests.Session()
-    session.mount("https://", adapter)
-    session.mount("http://", adapter)
-
+    session, settings = prepare_script_environment(settings=Settings())
     nasa_url = f"{settings.NASA_URL}{settings.NASA_URI_EPIC}"
     nasa_url_params = {
         "api_key": settings.NASA_API_KEY,
@@ -66,23 +54,24 @@ def fetch_nasa_epic() -> None:
                          f"{image_creation_day}/png/" \
                          f"{image_name}{file_extension}" \
                          f"?api_key={nasa_url_params.get('api_key')}"
-            epic_nasa_path = os.path.join(
-                sanitize_filepath(settings.IMG_PATH, platform="auto"),
-                sanitize_filename(
-                    f"{file_name}{image_number}{file_extension}"
-                )
+            epic_nasa_path = sanitize_file_path(
+                file_path=settings.IMG_PATH,
+                file_name=f"{file_name}{image_number}{file_extension}"
             )
             load_image(url=str(image_link), file_path=epic_nasa_path)
 
-            message = f"{image_number})Фото по ссылке: {image_link!r} " \
-                      f"было загружено по пути: {epic_nasa_path}"
-            click.echo(message)
+            message = f"""{image_number})Фото по ссылке: {image_link!r} было
+                    загружено по пути: {epic_nasa_path}
+            """
+            click.echo(message=correct_textwrap_dedent(message))
 
-        except HTTPError as exc:
-            click.echo(f"{image_number})Фото по ссылке: {image_link!r} {exc}")
+        except HTTPError as err:
+            message = f"{image_number})Фото по ссылке: {image_link!r} {err}"
+            click.echo(message=message)
 
-        except ConnectionError as exc:
-            click.echo(f"Ошибка подключения :( {exc}")
+        except ConnectionError as err:
+            message = f"Ошибка подключения :( {err}"
+            click.echo(message=message)
             time.sleep(settings.TIMEOUT)
 
 

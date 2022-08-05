@@ -1,16 +1,15 @@
-import os
-import textwrap
 import time
 
 import click
-import requests
-from pathvalidate import sanitize_filename, sanitize_filepath
 from requests import ConnectionError, HTTPError
-from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
 
 from settings import Settings
-from utils import create_dirs, load_image
+from utils import (
+    correct_textwrap_dedent,
+    load_image,
+    prepare_script_environment,
+    sanitize_file_path
+)
 
 
 @click.command()
@@ -21,19 +20,7 @@ from utils import create_dirs, load_image
 )
 def fetch_spacex_last_launch(launch_id: str) -> None:
     """Loading images from SpaceX API last launch."""
-    settings = Settings()
-    create_dirs(settings.IMG_PATH)
-    retry_strategy = Retry(
-        total=settings.RETRY_COUNT,
-        status_forcelist=settings.STATUS_FORCE_LIST,
-        allowed_methods=settings.ALLOWED_METHODS
-    )
-    adapter = HTTPAdapter(max_retries=retry_strategy)
-
-    session = requests.Session()
-    session.mount("https://", adapter)
-    session.mount("http://", adapter)
-
+    session, settings = prepare_script_environment(settings=Settings())
     space_x_url = f"{settings.SPACE_X_URL}{settings.SPACE_X_URI_LATEST}"\
         if launch_id == "latest" \
         else f"{settings.SPACE_X_URL}{settings.SPACE_X_URI_LAUNCH_ID}" \
@@ -50,31 +37,24 @@ def fetch_spacex_last_launch(launch_id: str) -> None:
         try:
             file_name = "space_x_"
             file_extension = ".jpg"
-            image_space_x_path = os.path.join(
-                sanitize_filepath(
-                    file_path=settings.IMG_PATH,
-                    platform="auto"
-                ),
-                sanitize_filename(
-                    filename=f"{file_name}{image_number}{file_extension}",
-                    platform="auto"
-                )
+            image_space_x_path = sanitize_file_path(
+                file_path=settings.IMG_PATH,
+                file_name=f"{file_name}{image_number}{file_extension}"
             )
             load_image(url=str(image_url), file_path=image_space_x_path)
 
             message = f"""{image_number})Фото по ссылке: {image_url!r}
                     было загружено по пути: {image_space_x_path}
             """
-            message = "\n".join(
-                [textwrap.dedent(line) for line in message.split("\n")]
-            )
-            click.echo(message)
+            click.echo(message=correct_textwrap_dedent(message))
 
-        except HTTPError as exc:
-            click.echo(f"{image_number})Фото по ссылке: {image_url!r} {exc}")
+        except HTTPError as err:
+            message = f"{image_number})Фото по ссылке: {image_url!r} {err}"
+            click.echo(message=message)
 
-        except ConnectionError as exc:
-            click.echo(f"Ошибка подключения :( {exc}")
+        except ConnectionError as err:
+            message = f"Ошибка подключения :( {err}"
+            click.echo(message=message)
             time.sleep(settings.TIMEOUT)
 
 
