@@ -1,3 +1,4 @@
+import sys
 import time
 
 import click
@@ -28,10 +29,12 @@ def fetch_spacex_last_launch(launch_id: str) -> None:
 
     space_x_images = session.get(url=space_x_url, timeout=settings.TIMEOUT)
     space_x_images.raise_for_status()
-
-    space_x_images = space_x_images.json().get(
-        "links"
-    ).get("flickr").get("original")
+    try:
+        space_x_images = space_x_images.json()["links"]["flickr"]["original"]
+    except KeyError:
+        message = "Что-то не так с ответом от стороннего API:("
+        click.echo(message=message)
+        sys.exit(1)
 
     for image_number, image_url in enumerate(space_x_images, start=1):
         try:

@@ -34,8 +34,8 @@ def fetch_nasa_epic() -> None:
     epic_image_attrs = {}
     epic_images_attrs = []
     for epic_image in epic_images:
-        epic_image_attrs["date"] = dt.fromisoformat(epic_image.get("date"))
-        epic_image_attrs["image"] = epic_image.get("image")
+        epic_image_attrs["date"] = dt.fromisoformat(epic_image["date"])
+        epic_image_attrs["image"] = epic_image["image"]
         epic_images_attrs.append(epic_image_attrs)
         epic_image_attrs = {}
     for image_number, image_url in enumerate(epic_images_attrs, start=1):
