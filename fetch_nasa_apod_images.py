@@ -34,9 +34,9 @@ def fetch_nasa_apod(images_count: int) -> None:
     )
     apod.raise_for_status()
 
-    for image_number, image_url in enumerate(apod.json(), start=1):
+    for image_number, image_link in enumerate(apod.json(), start=1):
         try:
-            image_link = image_url.get("url")
+            image_link = image_link["url"]
             file_name = "nasa_apod_"
             file_extension = get_file_extension(url=image_link)
             apod_nasa_path = sanitize_file_path(
