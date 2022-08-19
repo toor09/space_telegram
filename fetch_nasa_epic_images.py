@@ -34,22 +34,13 @@ def fetch_nasa_epic() -> None:
     epic.raise_for_status()
     epic_images = epic.json()
 
-    epic_image_attrs = {}
-    epic_images_attrs = []
-    for epic_image in epic_images:
-        epic_image_attrs["date"] = dt.fromisoformat(epic_image["date"])
-        epic_image_attrs["image"] = epic_image["image"]
-        epic_images_attrs.append(epic_image_attrs)
-        epic_image_attrs = {}
-    for image_number, image_url in enumerate(epic_images_attrs, start=1):
+    for image_number, image_url in enumerate(epic_images, start=1):
         file_name = "nasa_epic_"
         file_extension = ".png"
-        image_creation_year = image_url["date"].year
-        image_creation_month = f"0{image_url['date'].month}" if \
-            image_url['date'].month < 10 else image_url['date'].month
-        image_creation_day = f"0{image_url['date'].day}" if \
-            image_url['date'].day < 10 else image_url['date'].day
         image_name = image_url["image"]
+        image_creation_date = f"{dt.fromisoformat(image_url['date']):%Y.%m.%d}"
+        image_creation_year, image_creation_month, image_creation_day = \
+            image_creation_date.split(".")
         image_link = f"https://api.nasa.gov/EPIC/archive/natural/" \
                      f"{image_creation_year}/{image_creation_month}/" \
                      f"{image_creation_day}/png/" \
