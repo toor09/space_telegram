@@ -38,13 +38,13 @@ def fetch_spacex_last_launch(launch_id: str) -> None:
         sys.exit(1)
 
     for image_number, image_url in enumerate(space_x_images, start=1):
+        file_name = "space_x_"
+        file_extension = ".jpg"
+        image_space_x_path = sanitize_file_path(
+            file_path=settings.IMG_PATH,
+            file_name=f"{file_name}{image_number}{file_extension}"
+        )
         try:
-            file_name = "space_x_"
-            file_extension = ".jpg"
-            image_space_x_path = sanitize_file_path(
-                file_path=settings.IMG_PATH,
-                file_name=f"{file_name}{image_number}{file_extension}"
-            )
             load_image(url=str(image_url), file_path=image_space_x_path)
 
             message = f"""{image_number})Фото по ссылке: {image_url!r}
