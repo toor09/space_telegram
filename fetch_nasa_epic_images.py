@@ -19,12 +19,11 @@ def fetch_nasa_epic() -> None:
     Loading images from NASA API Earth Polychromatic Imaging Camera (EPIC).
     """
     session, settings = prepare_script_environment(settings=Settings())
-    nasa_url = f"{settings.NASA_URL}{settings.NASA_URI_EPIC}"
     nasa_url_params = {
         "api_key": settings.NASA_API_KEY,
     }
     epic = session.get(
-        url=nasa_url,
+        url="https://api.nasa.gov/EPIC/api/natural/images",
         params=nasa_url_params,
         timeout=settings.TIMEOUT
     )
@@ -48,12 +47,11 @@ def fetch_nasa_epic() -> None:
             image_creation_day = f"0{image_url['date'].day}" if \
                 image_url['date'].day < 10 else image_url['date'].day
             image_name = image_url["image"]
-            image_link = f"{settings.NASA_URL}" \
-                         f"{settings.NASA_URI_EPIC_ARCHIVE}/" \
+            image_link = f"https://api.nasa.gov/EPIC/archive/natural/" \
                          f"{image_creation_year}/{image_creation_month}/" \
                          f"{image_creation_day}/png/" \
                          f"{image_name}{file_extension}" \
-                         f"?api_key={nasa_url_params.get('api_key')}"
+                         f"?api_key={nasa_url_params['api_key']}"
             epic_nasa_path = sanitize_file_path(
                 file_path=settings.IMG_PATH,
                 file_name=f"{file_name}{image_number}{file_extension}"

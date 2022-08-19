@@ -22,13 +22,12 @@ from utils import (
 def fetch_nasa_apod(images_count: int) -> None:
     """Loading images from NASA API Astronomy Picture of the Day (APOD)."""
     session, settings = prepare_script_environment(settings=Settings())
-    nasa_url = f"{settings.NASA_URL}{settings.NASA_URI_APOD}"
     nasa_url_params = {
         "count": images_count,
         "api_key": settings.NASA_API_KEY,
     }
     apod = session.get(
-        url=nasa_url,
+        url="https://api.nasa.gov/planetary/apod",
         params=nasa_url_params,  # type: ignore
         timeout=settings.TIMEOUT
     )

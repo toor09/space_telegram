@@ -1,19 +1,12 @@
 from pathlib import Path
 from typing import List
 
-from pydantic import AnyHttpUrl, BaseSettings, validator
+from pydantic import BaseSettings, validator
 
 
 class Settings(BaseSettings):
     IMG_PATH: Path = Path("images")
-    SPACE_X_URL: AnyHttpUrl
-    SPACE_X_URI_LATEST: str
-    SPACE_X_URI_LAUNCH_ID: str
     NASA_API_KEY: str
-    NASA_URL: AnyHttpUrl
-    NASA_URI_APOD: str
-    NASA_URI_EPIC: str
-    NASA_URI_EPIC_ARCHIVE: str
     NASA_APOD_IMAGES_COUNT: int = 30
     TIMEOUT: int = 10
     RETRY_COUNT: int = 5

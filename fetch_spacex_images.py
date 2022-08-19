@@ -22,17 +22,18 @@ from utils import (
 def fetch_spacex_last_launch(launch_id: str) -> None:
     """Loading images from SpaceX API last launch."""
     session, settings = prepare_script_environment(settings=Settings())
-    space_x_url = f"{settings.SPACE_X_URL}{settings.SPACE_X_URI_LATEST}"\
-        if launch_id == "latest" \
-        else f"{settings.SPACE_X_URL}{settings.SPACE_X_URI_LAUNCH_ID}" \
-             f"{launch_id}"
-
-    space_x_images = session.get(url=space_x_url, timeout=settings.TIMEOUT)
+    space_x_images = session.get(
+        url=f"https://api.spacexdata.com/v5/launches/{launch_id}",
+        timeout=settings.TIMEOUT
+    )
     space_x_images.raise_for_status()
+    space_x_images = space_x_images.json()
     try:
-        space_x_images = space_x_images.json()["links"]["flickr"]["original"]
+        space_x_images = space_x_images[
+            "links"
+        ]["flickr"]["original"]  # type: ignore
     except KeyError:
-        message = "Что-то не так с ответом от стороннего API:("
+        message = "Что-то не так с ответом от SpaceX API:("
         click.echo(message=message)
         sys.exit(1)
 
