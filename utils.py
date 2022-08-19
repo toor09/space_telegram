@@ -1,7 +1,7 @@
 import os
 import textwrap
 from pathlib import Path
-from typing import List, Tuple, Union
+from typing import List, Union
 
 import requests
 from pathvalidate import sanitize_filename, sanitize_filepath
@@ -83,15 +83,19 @@ def resize_image_file_to_limit(
             quality -= 1
 
 
-def prepare_script_environment(
-        settings: Settings
-) -> Tuple[requests.Session, Settings]:
-    """Prepare environment and create request session with retry strategy."""
+def create_dirs(settings: Settings) -> None:
+    """Creates dirs for downloaded files."""
     images_path = sanitize_filepath(
         file_path=settings.IMG_PATH,
         platform="auto"
     )
     os.makedirs(name=images_path, exist_ok=True)
+
+
+def get_session(
+        settings: Settings
+) -> requests.Session:
+    """Get new request session with retry strategy."""
     retry_strategy = Retry(
         total=settings.RETRY_COUNT,
         status_forcelist=settings.STATUS_FORCE_LIST,
@@ -102,4 +106,4 @@ def prepare_script_environment(
     session = requests.Session()
     session.mount("https://", adapter)
     session.mount("http://", adapter)
-    return session, settings
+    return session

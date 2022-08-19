@@ -5,7 +5,7 @@ from typing import Optional
 import click
 import telegram
 
-from settings import Settings
+from settings import Settings, TelegramBotSettings
 from utils import (
     correct_textwrap_dedent,
     get_file_size,
@@ -24,7 +24,8 @@ from utils import (
 def publish_images(image_filename: Optional[str]) -> None:
     """Publish text message to telegram channel."""
     settings = Settings()
-    bot = telegram.Bot(token=settings.TG_BOT_TOKEN)
+    tg_bot_settings = TelegramBotSettings()
+    bot = telegram.Bot(token=tg_bot_settings.TG_BOT_TOKEN)
     if image_filename:
         image_file_path = sanitize_file_path(
             file_path=settings.IMG_PATH,
@@ -45,19 +46,19 @@ def publish_images(image_filename: Optional[str]) -> None:
     try:
         if get_file_size(
             filename=image_file_path
-        ) > settings.TG_MAX_LIMIT_UPLOAD_FILE:
+        ) > tg_bot_settings.TG_MAX_LIMIT_UPLOAD_FILE:
             resize_image_file_to_limit(
                 filename=image_file_path,
-                upload_limit=settings.TG_MAX_LIMIT_UPLOAD_FILE
+                upload_limit=tg_bot_settings.TG_MAX_LIMIT_UPLOAD_FILE
             )
 
         with open(file=image_file_path, mode="rb") as file:
             bot.send_document(
-                chat_id=settings.TG_CHAT_ID,
+                chat_id=tg_bot_settings.TG_CHAT_ID,
                 document=file,
             )
         message = f"""Фото {image_file_path} было опубликовано в telegram
-                    канале {settings.TG_CHAT_ID}.
+                    канале {tg_bot_settings.TG_CHAT_ID}.
             """
         click.echo(message=correct_textwrap_dedent(message))
 

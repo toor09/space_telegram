@@ -3,12 +3,13 @@ import time
 import click
 from requests import ConnectionError, HTTPError
 
-from settings import Settings
+from settings import NasaApiSettings, Settings
 from utils import (
     correct_textwrap_dedent,
+    create_dirs,
     get_file_extension,
+    get_session,
     load_image,
-    prepare_script_environment,
     sanitize_file_path
 )
 
@@ -16,15 +17,18 @@ from utils import (
 @click.command()
 @click.option(
     "-c", "--images-count",
-    default=Settings().NASA_APOD_IMAGES_COUNT,
+    default=NasaApiSettings().NASA_APOD_IMAGES_COUNT,
     help="Images count for loading."
 )
 def fetch_nasa_apod(images_count: int) -> None:
     """Loading images from NASA API Astronomy Picture of the Day (APOD)."""
-    session, settings = prepare_script_environment(settings=Settings())
+    settings = Settings()
+    nasa_api_settings = NasaApiSettings()
+    create_dirs(settings=settings)
+    session = get_session(settings=settings)
     nasa_url_params = {
         "count": images_count,
-        "api_key": settings.NASA_API_KEY,
+        "api_key": nasa_api_settings.NASA_API_KEY,
     }
     apod = session.get(
         url="https://api.nasa.gov/planetary/apod",

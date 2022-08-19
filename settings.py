@@ -6,16 +6,11 @@ from pydantic import BaseSettings, validator
 
 class Settings(BaseSettings):
     IMG_PATH: Path = Path("images")
-    NASA_API_KEY: str
-    NASA_APOD_IMAGES_COUNT: int = 30
     TIMEOUT: int = 10
+    PUBLISH_IMAGE_TIMEOUT: int = 4
     RETRY_COUNT: int = 5
     STATUS_FORCE_LIST: str = "429,500,502,503,504"
     ALLOWED_METHODS: str = "HEAD,GET,OPTIONS"
-    TG_BOT_TOKEN: str
-    TG_CHAT_ID: str
-    TG_MAX_LIMIT_UPLOAD_FILE: int = 10000000
-    PUBLISH_IMAGE_TIMEOUT: int = 4
 
     @validator("STATUS_FORCE_LIST")
     def status_force_list(cls, v: str) -> List[int]:
@@ -30,3 +25,14 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = True
+
+
+class NasaApiSettings(Settings):
+    NASA_API_KEY: str
+    NASA_APOD_IMAGES_COUNT: int = 30
+
+
+class TelegramBotSettings(Settings):
+    TG_BOT_TOKEN: str
+    TG_CHAT_ID: str
+    TG_MAX_LIMIT_UPLOAD_FILE: int = 10000000

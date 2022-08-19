@@ -7,8 +7,9 @@ from requests import ConnectionError, HTTPError
 from settings import Settings
 from utils import (
     correct_textwrap_dedent,
+    create_dirs,
+    get_session,
     load_image,
-    prepare_script_environment,
     sanitize_file_path
 )
 
@@ -21,7 +22,9 @@ from utils import (
 )
 def fetch_spacex_last_launch(launch_id: str) -> None:
     """Loading images from SpaceX API last launch."""
-    session, settings = prepare_script_environment(settings=Settings())
+    settings = Settings()
+    create_dirs(settings=settings)
+    session = get_session(settings=settings)
     space_x_images = session.get(
         url=f"https://api.spacexdata.com/v5/launches/{launch_id}",
         timeout=settings.TIMEOUT

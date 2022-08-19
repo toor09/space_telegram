@@ -4,11 +4,12 @@ from datetime import datetime as dt
 import click
 from requests import ConnectionError, HTTPError
 
-from settings import Settings
+from settings import NasaApiSettings, Settings
 from utils import (
     correct_textwrap_dedent,
+    create_dirs,
+    get_session,
     load_image,
-    prepare_script_environment,
     sanitize_file_path
 )
 
@@ -18,9 +19,12 @@ def fetch_nasa_epic() -> None:
     """
     Loading images from NASA API Earth Polychromatic Imaging Camera (EPIC).
     """
-    session, settings = prepare_script_environment(settings=Settings())
+    settings = Settings()
+    nasa_api_settings = NasaApiSettings()
+    create_dirs(settings=settings)
+    session = get_session(settings=settings)
     nasa_url_params = {
-        "api_key": settings.NASA_API_KEY,
+        "api_key": nasa_api_settings.NASA_API_KEY,
     }
     epic = session.get(
         url="https://api.nasa.gov/EPIC/api/natural/images",
