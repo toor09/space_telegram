@@ -1,7 +1,7 @@
 import os
 import textwrap
 from pathlib import Path
-from typing import List, Union
+from typing import List, Optional, Union
 
 import requests
 from pathvalidate import sanitize_filename, sanitize_filepath
@@ -17,9 +17,13 @@ def get_file_extension(url: str) -> str:
     return os.path.splitext(p=url)[-1]
 
 
-def load_image(url: str, file_path: Union[Path, str]) -> None:
+def load_image(
+        url: str,
+        file_path: Union[Path, str],
+        params: Optional[dict] = None
+) -> None:
     """Loading image from URL."""
-    image = requests.get(url=url)
+    image = requests.get(url=url, params=params)
     image.raise_for_status()
 
     with open(file_path, mode="wb") as file:
