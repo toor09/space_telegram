@@ -87,6 +87,12 @@ python3 fetch_nasa_apod_images.py
 ```
 python3 fetch_nasa_apod_images.py -c 50
 ```
+- Есть возможность указать булево значение для скачивания фото дня за последнюю неделю (будут скачаны 7 фотографий):
+
+- `-w` или `--is-last-week` По умолчанию значение равно `False`.
+```
+python3 fetch_nasa_apod_images.py -w true
+```
 
 ## Запуск скрипта по скачиванию фотографий при помощи NASA EPIC API
 

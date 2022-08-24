@@ -1,4 +1,5 @@
 import time
+from datetime import date, timedelta
 
 import click
 from requests import ConnectionError, HTTPError
@@ -20,25 +21,51 @@ from utils import (
     default=NasaApiSettings().NASA_APOD_IMAGES_COUNT,
     help="Images count for loading."
 )
-def fetch_nasa_apod(images_count: int) -> None:
+@click.option(
+    "-w", "--is-last-week",
+    default=False,
+    help="Images published at last week."
+)
+def fetch_nasa_apod(images_count: int, is_last_week: bool) -> None:
     """Loading images from NASA API Astronomy Picture of the Day (APOD)."""
     settings = Settings()
     nasa_api_settings = NasaApiSettings()
     create_dirs(settings=settings)
     session = get_session(settings=settings)
-    nasa_url_params = {
-        "count": images_count,
-        "api_key": nasa_api_settings.NASA_API_KEY,
-    }
-    apod = session.get(
-        url="https://api.nasa.gov/planetary/apod",
-        params=nasa_url_params,  # type: ignore
-        timeout=settings.TIMEOUT
-    )
-    apod.raise_for_status()
-    apod = apod.json()
 
-    for media_number, media_link in enumerate(apod, start=1):
+    if is_last_week:
+        apods = []
+        current_date = date.today()
+        end_date = date.today() - timedelta(days=7)
+        while end_date != current_date:
+            nasa_url_params = {
+                "date": f"{current_date}",
+                "api_key": nasa_api_settings.NASA_API_KEY,
+            }
+            apod = session.get(
+                url="https://api.nasa.gov/planetary/apod",
+                params=nasa_url_params,
+                timeout=settings.TIMEOUT
+            )
+            apod.raise_for_status()
+            apod = apod.json()
+            current_date = current_date - timedelta(days=1)
+            apods.append(apod)
+
+    else:
+        nasa_url_params = {
+            "count": images_count,  # type: ignore
+            "api_key": nasa_api_settings.NASA_API_KEY,
+        }
+        apods = session.get(
+            url="https://api.nasa.gov/planetary/apod",
+            params=nasa_url_params,
+            timeout=settings.TIMEOUT
+        )  # type: ignore
+        apods.raise_for_status()  # type: ignore
+        apods = apods.json()  # type: ignore
+
+    for media_number, media_link in enumerate(apods, start=1):
         if media_link["media_type"] != "image":  # type: ignore
             continue
         image_link = media_link["url"]  # type: ignore
